@@ -5,7 +5,7 @@ public class AStar {
 	private static GridNode start;
 	private static GridNode end;
 
-	public AStar(List<roomInstance> roomInstances, GridNode start, GridNode end){
+	public AStar(List<RoomInstance> roomInstances, GridNode start, GridNode end){
 		AStar.start = start;
 		AStar.end = end;
 		roomInstances.forEach(room -> {
@@ -61,7 +61,6 @@ public class AStar {
 				}
 			}
 		}
-
 		return null;
 	}
 

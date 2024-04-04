@@ -2,10 +2,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Graph {
-	List<roomInstance> nodes;
+	List<RoomInstance> nodes;
 	List<Edge> edges;
 
-	public Graph(List<roomInstance> nodes) {
+	public Graph(List<RoomInstance> nodes) {
 		this.nodes = nodes;
 		this.edges = new ArrayList<>();
 		for (int i = 0; i < nodes.size(); i++) {
@@ -19,7 +19,7 @@ public class Graph {
 		if (nodes.isEmpty()) return null;
 
 		ArrayList<Edge> result = new ArrayList<>();
-		ArrayList<roomInstance> visitedNodes = new ArrayList<>();
+		ArrayList<RoomInstance> visitedNodes = new ArrayList<>();
 
 		visitedNodes.add(nodes.get(0));  // start from the first room
 
