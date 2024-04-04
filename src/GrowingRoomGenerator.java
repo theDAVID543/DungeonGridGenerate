@@ -2,7 +2,8 @@ import java.util.*;
 import java.util.List;
 
 public class GrowingRoomGenerator {
-	private static final int MAX_ROOM_SIZE = 5;
+	private static final int MAX_ROOM_SIZE = 7;
+	private static final int MIN_ROOM_SIZE = 2;
 	private static final int MAX_ATTEMPTS = 10;
 	public static int QUERY_RANGE = 50;
 	private static final int MAX_ROOMS = 50;
@@ -33,8 +34,8 @@ public class GrowingRoomGenerator {
 
 			boolean roomAdded = false;
 			for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-				int newWidth = rand.nextInt(MAX_ROOM_SIZE) + 1;
-				int newHeight = rand.nextInt(MAX_ROOM_SIZE) + 1;
+				int newWidth = rand.nextInt(MIN_ROOM_SIZE, MAX_ROOM_SIZE) + 1;
+				int newHeight = rand.nextInt(MIN_ROOM_SIZE, MAX_ROOM_SIZE) + 1;
 
 				// Determine side
 				int side = rand.nextInt(4);
@@ -50,6 +51,10 @@ public class GrowingRoomGenerator {
 
 				RoomInstance newRoomInstance = new RoomInstance(newX, newY, newWidth, newHeight);
 				if (!roomCollides(newRoomInstance)) {
+					for(int i = 0; i < rand.nextInt(3); i++){
+						newRoomInstance.randGenerateDoor();
+					}
+					newRoomInstance.randGenerateDoor();
 					roomInstances.add(newRoomInstance);
 					activeRoomInstances.add(newRoomInstance);
 					roomAdded = true;
@@ -112,7 +117,7 @@ public class GrowingRoomGenerator {
 			List<Edge> mstEdges = graph.primsMST();
 			mstEdges.forEach(v -> {
 				System.out.println("Edge from: (" + v.source.x + ", " + v.source.y + ") to (" + v.destination.x + ", " + v.destination.y + ")");
-				AStar aStar = new AStar(generator.roomInstances, new GridNode(v.source.x-1, v.source.y), new GridNode(v.destination.x-1, v.destination.y));
+				AStar aStar = new AStar(generator.roomInstances, new GridNode(v.source.x, v.source.y), new GridNode(v.destination.x, v.destination.y));
 				Set<GridNode> temp = aStar.findPath();
 				if(temp != null){
 					path.addAll(aStar.findPath());
@@ -134,15 +139,18 @@ public class GrowingRoomGenerator {
 //					finalResult.put(new GridNode(j, i), occupied ? "███" : "   ");
 //				}
 //			}
+			path.forEach(v -> {
+				finalResult.put(v, "━╋━");
+			});
 			generator.roomInstances.forEach(room -> {
 				for(int y = room.y; y < room.y + room.height; y++) {
 					for (int x = room.x; x < room.x + room.width; x++) {
-						finalResult.put(new GridNode(x,y), "███");
+						finalResult.put(new GridNode(x, y), "███");
+						for(GridNode door : room.getDoorsPosition()){
+							finalResult.put(new GridNode(door.x, door.y), " ╳ ");
+						}
 					}
 				}
-			});
-			path.forEach(v -> {
-				finalResult.put(v, "━╋━");
 			});
 //			for(int y = -QUERY_RANGE; y < QUERY_RANGE; y++){
 //				for(int x = -QUERY_RANGE; x < QUERY_RANGE; x++){

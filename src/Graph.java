@@ -2,24 +2,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Graph {
-	List<RoomInstance> nodes;
+	List<RoomInstance> roomInstances;
 	List<Edge> edges;
+	List<GridNode> nodes;
 
-	public Graph(List<RoomInstance> nodes) {
-		this.nodes = nodes;
+	public Graph(List<RoomInstance> roomInstances) {
+		this.roomInstances = roomInstances;
 		this.edges = new ArrayList<>();
-		for (int i = 0; i < nodes.size(); i++) {
-			for (int j = i + 1; j < nodes.size(); j++) {
-				edges.add(new Edge(nodes.get(i), nodes.get(j)));
+		nodes = new ArrayList<>();
+		for (RoomInstance node : roomInstances) {
+			nodes.addAll(node.getDoorsPosition());
+		}
+		for (GridNode door : nodes) {
+			for(GridNode door2 : nodes){
+				if(!door.equals(door2)){
+					edges.add(new Edge(door, door2));
+				}
 			}
 		}
+//		for (int i = 0; i < nodes.size(); i++) {
+//			for (int j = i + 1; j < nodes.size(); j++) {
+////				edges.add(new Edge(nodes.get(i), nodes.get(j)));
+//			}
+//		}
 	}
 
 	public List<Edge> primsMST() {
 		if (nodes.isEmpty()) return null;
 
 		ArrayList<Edge> result = new ArrayList<>();
-		ArrayList<RoomInstance> visitedNodes = new ArrayList<>();
+		ArrayList<GridNode> visitedNodes = new ArrayList<>();
 
 		visitedNodes.add(nodes.get(0));  // start from the first room
 
