@@ -24,6 +24,7 @@ public class GrowingRoomGenerator {
 
 		// Start with a smaller initial room centered.
 		RoomInstance initialRoomInstance = new RoomInstance(-2, -2, 4, 4);
+		initialRoomInstance.randGenerateDoor();
 		roomInstances.add(initialRoomInstance);
 
 		List<RoomInstance> activeRoomInstances = new ArrayList<>();
@@ -51,9 +52,9 @@ public class GrowingRoomGenerator {
 
 				RoomInstance newRoomInstance = new RoomInstance(newX, newY, newWidth, newHeight);
 				if (!roomCollides(newRoomInstance)) {
-					for(int i = 0; i < rand.nextInt(3); i++){
-						newRoomInstance.randGenerateDoor();
-					}
+//					for(int i = 0; i < rand.nextInt(3); i++){
+//						newRoomInstance.randGenerateDoor();
+//					}
 					newRoomInstance.randGenerateDoor();
 					roomInstances.add(newRoomInstance);
 					activeRoomInstances.add(newRoomInstance);
@@ -140,14 +141,15 @@ public class GrowingRoomGenerator {
 //				}
 //			}
 			path.forEach(v -> {
-				finalResult.put(v, "━╋━");
+//				finalResult.put(v, "━╋━");
+				finalResult.put(v, getPathSingle(v));
 			});
 			generator.roomInstances.forEach(room -> {
 				for(int y = room.y; y < room.y + room.height; y++) {
 					for (int x = room.x; x < room.x + room.width; x++) {
 						finalResult.put(new GridNode(x, y), "███");
 						for(GridNode door : room.getDoorsPosition()){
-							finalResult.put(new GridNode(door.x, door.y), " ╳ ");
+							finalResult.put(new GridNode(door.x, door.y), getDoorSingle(door, finalResult));
 						}
 					}
 				}
@@ -170,5 +172,51 @@ public class GrowingRoomGenerator {
 				System.out.println();
 			}
 		}
+	}
+	public static String getPathSingle(GridNode now){
+		StringBuilder sb = new StringBuilder();
+		if(path.contains(new GridNode(now.x - 1, now.y))){
+			sb.append("━");
+		}else{
+			sb.append(" ");
 		}
+		if(path.contains(new GridNode(now.x, now.y + 1)) && path.contains(new GridNode(now.x, now.y - 1))){
+			sb.append("┃");
+		}else if(path.contains(new GridNode(now.x, now.y + 1))){
+			sb.append("╻");
+		}else if(path.contains(new GridNode(now.x, now.y - 1))){
+			sb.append("╹");
+		}else{
+			sb.append(" ");
+		}
+		if(path.contains(new GridNode(now.x + 1, now.y))){
+			sb.append("━");
+		}else{
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+	public static String getDoorSingle(GridNode now, Map<GridNode, String> finalResult){
+		StringBuilder sb = new StringBuilder();
+		if(!Objects.equals(finalResult.get(new GridNode(now.x - 1, now.y)), null)){
+			sb.append("━");
+		}else{
+			sb.append(" ");
+		}
+		if(!Objects.equals(finalResult.get(new GridNode(now.x, now.y + 1)), null) && !Objects.equals(finalResult.get(new GridNode(now.x, now.y - 1)), null)){
+			sb.append("┃");
+		}else if(!Objects.equals(finalResult.get(new GridNode(now.x, now.y + 1)), null)){
+			sb.append("╻");
+		}else if(!Objects.equals(finalResult.get(new GridNode(now.x, now.y - 1)), null)){
+			sb.append("╹");
+		}else{
+			sb.append(" ");
+		}
+		if(!Objects.equals(finalResult.get(new GridNode(now.x + 1, now.y)), null)){
+			sb.append("━");
+		}else{
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
 }

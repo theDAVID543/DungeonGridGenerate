@@ -49,7 +49,7 @@ public class AStar {
 			for (GridNode neighbor : getNeighbors(current)){
 				double tentativeGScore = gScore.get(current) + 1;
 				if(GrowingRoomGenerator.path.contains(neighbor)){
-					tentativeGScore --;
+					tentativeGScore -= 1;
 				}
 				if (tentativeGScore < gScore.getOrDefault(neighbor, Double.MAX_VALUE)) {
 					cameFrom.put(neighbor, current);
